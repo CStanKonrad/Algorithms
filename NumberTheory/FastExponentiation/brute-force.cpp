@@ -1,29 +1,6 @@
 #include <cstdio>
 #include <algorithm>
 
-#define MAX_N 1000000
-
-int n, m;
-long long tab[MAX_N + 7];
-
-void add(int _beg, int _end, long long _val)
-{
-	for (int i = _beg; i <= _end; i++)
-	{
-		tab[i] += _val;
-	}
-}
-
-long long query(int _beg, int _end)
-{
-	long long maximum = tab[_beg];
-	for (int i = _beg + 1; i <= _end; i++)
-	{
-		maximum = std::max(maximum, tab[i]);
-	}
-	return maximum;
-}
-
 long long a;
 unsigned long long b, c;
 int main()
