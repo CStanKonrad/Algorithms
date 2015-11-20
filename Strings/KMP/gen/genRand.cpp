@@ -25,7 +25,7 @@ int main(int _argc, char *_argv[])
 	cout << pattern << " ";
 	for (int i = 0; i < m; i++)
 	{
-		if ((rand()%probability) == 0)
+		if (((rand()%probability) == 0) && (i + pattern.size() <= m))
 		{
 			cout << pattern;
 			i += pattern.size();
