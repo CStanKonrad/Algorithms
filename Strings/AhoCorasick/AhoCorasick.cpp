@@ -27,6 +27,10 @@ struct SAhoNode
 {
     SAhoNode()
     {
+        clear();
+    }
+    void clear()
+    {
         numOfEnds = 0;
         sufLnk = nullptr;
         patLnk = nullptr;
@@ -51,9 +55,29 @@ private:
 
         return _node;
     }
+    void dfsClear(SAhoNode *_node)
+    {
+        for (std::map <char, SAhoNode*>::iterator i = _node->son.begin(); i != _node->son.end(); i++)
+        {
+            dfsClear(i->second);
+        }
+        delete _node;
+    }
 public:
     CAhoCorasick()
     {
+    }
+    ~CAhoCorasick()
+    {
+        clear();
+    }
+    void clear()
+    {
+        for (std::map <char, SAhoNode*>::iterator i = root.son.begin(); i != root.son.end(); i++)
+        {
+            dfsClear(i->second);
+        }
+        root.clear();
     }
     void insert(char *_pattern)
     {
