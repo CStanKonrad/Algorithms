@@ -38,13 +38,15 @@ private:
     int numOfElements = 0;  //number of elements
     int pO2NumOfElements = 0;   //smallest power of 2 wihich is >= than numOfElements
     int log2pO2NumOfElements = 0;
+    int preProcLog2[(1<<log2ReservedMemory) + 7];
     SNode arrary[(1<<log2ReservedMemory) + 7];
 
     int howManyInSubTree(int _id)
     {
-        int l2;
-        for (l2 = 0; (1<<(l2 + 1)) <= _id; l2++);
-        return (1 << (log2pO2NumOfElements - l2));
+        //int l2;
+        //for (l2 = 0; (1<<(l2 + 1)) <= _id; l2++);
+
+        return (1 << (log2pO2NumOfElements - preProcLog2[_id]));
 
     }
 
@@ -77,6 +79,13 @@ public:
 
         if (pO2NumOfElements > (1<<(log2ReservedMemory - 1)))
             throw "CIIPlusPlusTree-init(...): Not enough memory reserved";
+
+        for (int i = 1, tmpLog2 = 0; i < (1<<log2ReservedMemory) + 7; i++)
+        {
+            if ((1 << (tmpLog2 + 1)) <=  i)
+                tmpLog2++;
+            preProcLog2[i] = tmpLog2;
+        }
     }
     /*add _val on interval [_beg; _end]; _beg >= 1 */
     void insert(int _beg, int _end, const long long _val)

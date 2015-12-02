@@ -26,7 +26,7 @@ SOFTWARE.
 #include <cstdio>
 #include <cmath>
 
-#define MAX_VAL 1000000
+#define MAX_VAL 10000000
 
 
 int sieveOfEratosthenesSmallestDivisor[MAX_VAL + 7];
@@ -39,7 +39,7 @@ void sieveOfEratosthenes(int _end)  //[2;_end]
     {
         if (sieveOfEratosthenesSmallestDivisor[i] != 0)
             continue;
-        for (j = i; j <= _end; j += i)
+        for (j = i*i; j <= _end; j += i)
         {
             if (sieveOfEratosthenesSmallestDivisor[j] == 0)
                 sieveOfEratosthenesSmallestDivisor[j] = i;
@@ -51,7 +51,7 @@ void printPrimes(int _end)
 {
     for (int i = 2; i <= _end; i++)
     {
-        if (sieveOfEratosthenesSmallestDivisor[i] == i || sieveOfEratosthenesSmallestDivisor[i] == 0)
+        if (sieveOfEratosthenesSmallestDivisor[i] == 0)
             printf("%d ", i);
     }
 }
@@ -61,5 +61,5 @@ int main()
 {
     sieveOfEratosthenes(MAX_VAL);
     printPrimes(MAX_VAL);
-	return 0;
+    return 0;
 }
