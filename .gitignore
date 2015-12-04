@@ -1,0 +1,8 @@
+# Work in progress #
+####################
+Geometry/
+
+# Tests #
+*.in
+*.out
+*.test
