@@ -26,12 +26,12 @@ SOFTWARE.
 #include <cstdlib>
 #include <algorithm>
 
-void QuickSort(int _beg, int _end, int *_arr)
+void quickSort(int _beg, int _end, int *_arr)   //[_beg;_end)
 {
     if (_end - _beg <= 1)
         return;
 
-    int separator = (rand()%(_end - _beg)) + _beg;
+    int separator = (rand()%(_end - _beg)) + _beg;  //random element from [_beg;_end)
     std::swap(_arr[separator], _arr[_end - 1]);
 
     int e = _beg;
@@ -44,8 +44,8 @@ void QuickSort(int _beg, int _end, int *_arr)
         }
     }
 
-    QuickSort(_beg, e - 1, _arr);
-    QuickSort(e, _end, _arr);
+    quickSort(_beg, e - 1, _arr);
+    quickSort(e, _end, _arr);
 }
 
 #define MAX_TAB_SIZE 1000000
@@ -61,7 +61,7 @@ int main()
     }
     int beg, end;
     scanf("%d%d", &beg, &end);
-    QuickSort(beg, end, array);
+    quickSort(beg, end, array);
     for (int i = 0; i < n; i++)
     {
         printf("%d ", array[i]);
