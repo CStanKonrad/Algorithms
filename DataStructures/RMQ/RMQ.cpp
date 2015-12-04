@@ -49,13 +49,13 @@ public:
     {
         for (int i = 1; i <= log2ReservedMemory; i++)
         {
-            for (int j = 1; j <= numOfElements; j++)
+            for (int j = 1; j + (1 << i) - 1 <= numOfElements; j++)
             {
-                array[i][j] = std::min(array[i - 1][j], array[i - 1][std::min(j + (1 << (i - 1)), numOfElements)]);
+                array[i][j] = std::min(array[i - 1][j], array[i - 1][j + (1 << (i - 1))]);
             }
         }
     }
-    int query(int _beg, int _end)   //[_beg;_end]
+    int query(int _beg, int _end)   //[_beg;_end]; _beg >= 1
     {
         int lenLog2 = preProcLog2[(_end - _beg + 1)];
         return std::min(array[lenLog2][_beg], array[lenLog2][_end - (1 << lenLog2) + 1]);
