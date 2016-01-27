@@ -26,169 +26,157 @@ SOFTWARE.
 
 struct SNode
 {
-    long long w = 0;
-    long long W = 0;
+	long long w = 0;
+	long long W = 0;
 };
 
 /*  log2ReservedMemory: 2^log2ReservedMemory >= 2^(log2(pO2NumOfElements)+1) */
-template<int log2ReservedMemory = 21>
+template<int log2ReservedMemory=21>
 class CIIPlusPlusTree
 {
 private:
-    int numOfElements = 0;  //number of elements
-    int pO2NumOfElements = 0;   //smallest power of 2 wihich is >= than numOfElements
-    int log2pO2NumOfElements = 0;
-    int preProcLog2[(1<<log2ReservedMemory) + 7];
-    SNode arrary[(1<<log2ReservedMemory) + 7];
-
-    int howManyInSubTree(int _id)
-    {
-        //int l2;
-        //for (l2 = 0; (1<<(l2 + 1)) <= _id; l2++);
-
-        return (1 << (log2pO2NumOfElements - preProcLog2[_id]));
-
-    }
-
-    long long sumWSmallToRoot(int _id)
-    {
-        long long result = 0;
-        while (_id >= 1)
-        {
-            result += arrary[_id].w;
-            _id /= 2;
-        }
-        return result;
-    }
-
-    void update(int _id, long long _val)
-    {
-        arrary[_id].w += _val;
-        arrary[_id].W = arrary[_id].w*howManyInSubTree(_id);
-        if (_id < pO2NumOfElements)
-            arrary[_id].W += arrary[2*_id].W + arrary[2*_id + 1].W;
-    }
-
+	SNode array[(1<<log2ReservedMemory) + 7];
+	bool isInited = false;
+	int numOfLeaves;	//number of leaves in tree
+	int numOfElements;	//number of used leaves
+	
+	void update(const int _nodeId, const long long _val, const int _howManyInSubTree)
+	{
+		array[_nodeId].w += _val;
+		array[_nodeId].W = _howManyInSubTree*array[_nodeId].w;
+		
+		if (_nodeId < numOfLeaves)
+			array[_nodeId].W += array[2*_nodeId].W + array[2*_nodeId + 1].W;
+		
+		return;
+	}
+	
+	long long sumWSmallToRoot(int _nodeId)
+	{
+		long long result = 0;
+		while (_nodeId >= 1)
+		{
+			result += array[_nodeId].w;
+			_nodeId /= 2;
+		}
+		return result;
+	}
+	
 public:
-	CIIPlusPlusTree() {}
-    void init(int _numOfElements)
-    {
-        numOfElements = _numOfElements;
-        for (log2pO2NumOfElements = 1; (1 << log2pO2NumOfElements) < numOfElements; log2pO2NumOfElements++);
-        pO2NumOfElements = (1 << log2pO2NumOfElements);
-
-        if (pO2NumOfElements > (1<<(log2ReservedMemory - 1)))
-            throw "CIIPlusPlusTree-init(...): Not enough memory reserved";
-
-        for (int i = 1, tmpLog2 = 0; i < (1<<log2ReservedMemory) + 7; i++)
-        {
-            if ((1 << (tmpLog2 + 1)) <=  i)
-                tmpLog2++;
-            preProcLog2[i] = tmpLog2;
-        }
-    }
-    /*add _val on interval [_beg; _end]; _beg >= 1 */
-    void insert(int _beg, int _end, const long long _val)
-    {
-        if ((_beg < 1) || (_beg > numOfElements) || (_end > numOfElements) || (_beg > _end))
-            throw "CIIPlusPlusTree-insert(...): _beg or _end - wrong values";
-
-        int i = pO2NumOfElements + _beg - 1;
-        int j = pO2NumOfElements + _end - 1;
-
-        update(i, _val);
-        if (i != j)
-            update(j, _val);
-
-        while (i/2 != j/2)
-        {
-            if (i%2 == 0)
-            {
-                update(i + 1, _val);
-            }
-            if (j%2 == 1)
-            {
-                update(j - 1, _val);
-            }
-            i /= 2;
-            j /= 2;
-            update(i, 0);
-            update(j, 0);
-        }
-        i /= 2;
-        while (i >= 1)
-        {
-            update(i, 0);
-            i /= 2;
-        }
-        return;
-    }
-    /*returns sum of values from interval [_beg; _end]; _beg >= 1 */
-    long long query(int _beg, int _end)
-    {
-        if ((_beg < 1) || (_beg > numOfElements) || (_end > numOfElements) || (_beg > _end))
-            throw "CIIPlusPlusTree-query(...): _beg or _end - wrong values";
-
-        int i = pO2NumOfElements + _beg - 1;
-        int j = pO2NumOfElements + _end - 1;
-
-        long long sumI = sumWSmallToRoot(i / 2);
-        long long sumJ = sumWSmallToRoot(j / 2);
-
-        long long result = sumI + arrary[i].W;
-        if (i != j)
-            result += sumJ + arrary[j].W;
-
-        while (i/2 != j/2)
-        {
-            if (i%2 == 0)
-            {
-                result += sumI*howManyInSubTree(i + 1) + arrary[i + 1].W;
-            }
-            if (j%2 == 1)
-            {
-                result += sumJ*howManyInSubTree(j - 1) + arrary[j - 1].W;
-            }
-            i /= 2;
-            j /= 2;
-            sumI -= arrary[i].w;
-            sumJ -= arrary[j].w;
-        }
-
-        return result;
-
-    }
-
-
+	void init(int _numOfElements)
+	{
+		numOfElements = _numOfElements;
+		for (numOfLeaves = 1; numOfLeaves < numOfElements; numOfLeaves <<= 1);
+		
+		if (numOfLeaves + numOfLeaves - 1 > (1<<log2ReservedMemory))
+			throw "CIIPlusPlusTree::init: Too many elements";
+		
+		isInited = true;
+	}
+	/*add to all elements from interval [_beg;_end] value _val*/
+	void insert(int _beg, int _end, long long _val)
+	{
+		if (isInited == false)
+			throw "CIIPlusPlusTree::insert: tree not initialized";
+		if (_beg <= 0 || _beg > numOfElements || _end <= 0 || _end > numOfElements || _end < _beg)
+			throw "CIIPlusPlusTree::insert: wrong _beg or _end values";
+		
+		int i = numOfLeaves + _beg - 1;
+		int j = numOfLeaves + _end - 1;
+		int howManyInSubTree = 1;
+		
+		update(i, _val, howManyInSubTree);
+		if (i != j)
+			update(j, _val, howManyInSubTree);
+		
+		while (i/2 != j/2)
+		{
+			if (i%2 == 0)
+				update(i + 1, _val, howManyInSubTree);
+			if (j%2 == 1)
+				update(j - 1, _val, howManyInSubTree);
+			i /= 2;
+			j /= 2;
+			howManyInSubTree *= 2;
+			update(i, 0, howManyInSubTree);
+			update(j, 0, howManyInSubTree);
+		}
+		
+		i /= 2;
+		howManyInSubTree *= 2;
+		while (i >= 1)
+		{
+			update(i, 0, howManyInSubTree);
+			i /= 2;
+			howManyInSubTree *= 2;
+		}
+		return;
+	}
+	/*sum of elements from interval [_beg;_end]*/
+	long long query(int _beg, int _end)
+	{
+		if (isInited == false)
+			throw "CIIPlusPlusTree::query: tree not initialized";
+		if (_beg <= 0 || _beg > numOfElements || _end <= 0 || _end > numOfElements || _end < _beg)
+			throw "CIIPlusPlusTree::query: wrong _beg or _end values";
+		
+		int i = numOfLeaves + _beg - 1;
+		int j = numOfLeaves + _end - 1;
+		int howManyInSubTree = 1;
+		
+		long long rootSumI = sumWSmallToRoot(i / 2);
+		long long rootSumJ = sumWSmallToRoot(j / 2);
+		
+		long long result = (rootSumI)*howManyInSubTree + array[i].W;
+		if (i != j)
+			result += (rootSumJ)*howManyInSubTree + array[j].W;
+		
+		while (i/2 != j/2)
+		{
+			if (i%2 == 0)
+				result += (rootSumI)*howManyInSubTree + array[i + 1].W;
+			
+			if (j%2 == 1)
+				result += (rootSumJ)*howManyInSubTree + array[j - 1].W;
+			
+			i /= 2;
+			j /= 2;
+			howManyInSubTree *= 2;
+			rootSumI -= array[i].w;
+			rootSumJ -= array[j].w;
+		}
+		return result;
+	}
+	
 };
 
 CIIPlusPlusTree<21> tree;
 int n, m;
 int main()
 {
-    scanf("%d%d", &n, &m);
-    tree.init(n);
-    for (int i = 1, t, a, b, c; i <= m; i++)
-    {
-        try
-        {
-            scanf("%d", &t);
-            if (t == 1)
-            {
-                scanf("%d%d%d", &a, &b, &c);
-                tree.insert(a, b, c);
-            }
-            else
-            {
-                scanf("%d%d", &a, &b);
-                printf("%lld\n", tree.query(a, b));
-            }
-        }
-        catch(const char *_err)
-        {
-            printf("ERROR:%s\n", _err);
-            return -1;
-        }
-    }
+	scanf("%d%d", &n, &m);
+	tree.init(n);
+	for (int i = 1, t, a, b, c; i <= m; i++)
+	{
+		try
+		{
+			scanf("%d", &t);
+			if (t == 1)
+			{
+				scanf("%d%d%d", &a, &b, &c);
+				tree.insert(a, b, c);
+			}
+			else
+			{
+				scanf("%d%d", &a, &b);
+				printf("%lld\n", tree.query(a, b));
+			}
+		}
+		catch(const char *_err)
+		{
+			printf("ERROR:%s\n", _err);
+			return -1;
+		}
+	}
     return 0;
 }
