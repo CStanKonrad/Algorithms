@@ -1,0 +1,13 @@
+-gen
+gen/genRand
+10
+-gena
+1000 1000 1000
+-pat
+TurboMatching
+-tf
+tests/
+-ncs
+-tera
+-savwa
+-gseedt
