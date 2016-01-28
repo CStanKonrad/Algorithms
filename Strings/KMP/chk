@@ -1,0 +1,13 @@
+-gen
+gen/genRand
+10
+-gena
+10 10000 100
+-pat
+brute-force
+-tf
+tests/
+-ncs
+-tera
+-savwa
+-gseedt
