@@ -28,7 +28,7 @@ int main(int _argc, char *_argv[])
 		if (((rand()%probability) == 0) && (i + pattern.size() <= m))
 		{
 			cout << pattern;
-			i += pattern.size();
+			i += pattern.size() - 1;
 		}
 		else
 		{
