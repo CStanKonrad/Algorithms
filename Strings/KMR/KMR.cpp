@@ -101,11 +101,9 @@ void kmrPreProc(std::string _text)
 	
 	for (int i = 1, j; (1<<i) <= _text.size(); ++i)
 	{
-		//printf("%d\n", i);
 		for (j = 0; j + (1<<i) - 1 < _text.size(); ++j)
 		{
 			kmr_id[i][j] = SIdentifier(kmr_id[i - 1][j].first, kmr_id[i - 1][j + (1<<(i - 1))].first, j);
-			//printf("%d %d\n", kmr_id[i][j].first, kmr_id[i][j].second);
 		}
 		
 		
@@ -126,14 +124,13 @@ int kmrCompare(int _b1, int _e1, int _b2, int _e2)
 	assert(_b1+len-1 - (1 << p2) + 1 >=0 && _b2+len-1 - (1 << p2) + 1 >= 0);
 	SIdentifier a(kmr_id[p2][_b1].first, kmr_id[p2][_b1+len-1 - (1 << p2) + 1].first, 0);
 	SIdentifier b(kmr_id[p2][_b2].first, kmr_id[p2][_b2+len-1 - (1 << p2) + 1].first, 0);
-	//printf("%d %d-%d %d-%d*%d%d %d%d\n", p2, _b1, _e1, _b2, _e2, a.first, a.second, b.first, b.second);
+	
 	if (a < b)
 		return -1;
 	else if (a > b)
 		return 1;
 	else
 	{
-		//puts("hello");
 		if (_e1 - _b1 + 1 < _e2 - _b2 + 1)
 			return -1;
 		else if (_e1 - _b1 + 1 > _e2 - _b2 + 1)
