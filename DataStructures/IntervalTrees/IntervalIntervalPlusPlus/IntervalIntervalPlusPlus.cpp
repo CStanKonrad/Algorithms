@@ -73,7 +73,7 @@ public:
 		
 		isInited = true;
 	}
-	/*add to all elements from interval [_beg;_end] value _val*/
+	/*add to all elements from interval [_beg;_end] value _val; _beg >= 1*/
 	void insert(int _beg, int _end, long long _val)
 	{
 		if (isInited == false)
@@ -112,7 +112,7 @@ public:
 		}
 		return;
 	}
-	/*sum of elements from interval [_beg;_end]*/
+	/*sum of elements from interval [_beg;_end]; _beg >= 1*/
 	long long query(int _beg, int _end)
 	{
 		if (isInited == false)

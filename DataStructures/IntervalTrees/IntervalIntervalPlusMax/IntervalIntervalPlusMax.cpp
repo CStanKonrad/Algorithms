@@ -72,7 +72,7 @@ public:
 		
 		isInited = true;
 	}
-	/*add to all elements from interval [_beg;_end] value _val*/
+	/*add to all elements from interval [_beg;_end] value _val; _beg >= 1*/
 	void insert(int _beg, int _end, long long _val)
 	{
 		if (isInited == false)
@@ -107,7 +107,7 @@ public:
 		}
 		return;
 	}
-	/*sum of elements from interval [_beg;_end]*/
+	/*sum of elements from interval [_beg;_end]; _beg >= 1*/
 	long long query(int _beg, int _end)
 	{
 		if (isInited == false)
@@ -144,29 +144,29 @@ CIIPlusMaxTree<21> tree;
 int n, m;
 int main()
 {
-    scanf("%d%d", &n, &m);
-    tree.init(n);
-    for (int i = 1, t, a, b, c; i <= m; i++)
-    {
-        try
-        {
-            scanf("%d", &t);
-            if (t == 1)
-            {
-                scanf("%d%d%d", &a, &b, &c);
-                tree.insert(a, b, c);
-            }
-            else
-            {
-                scanf("%d%d", &a, &b);
-                printf("%lld\n", tree.query(a, b));
-            }
-        }
-        catch(const char *_err)
-        {
-            printf("ERROR:%s\n", _err);
-            return -1;
-        }
-    }
+	scanf("%d%d", &n, &m);
+	tree.init(n);
+	for (int i = 1, t, a, b, c; i <= m; i++)
+	{
+		try
+		{
+			scanf("%d", &t);
+			if (t == 1)
+			{
+				scanf("%d%d%d", &a, &b, &c);
+				tree.insert(a, b, c);
+			}
+			else
+			{
+				scanf("%d%d", &a, &b);
+				printf("%lld\n", tree.query(a, b));
+			}
+		}
+		catch(const char *_err)
+		{
+			printf("ERROR:%s\n", _err);
+			return -1;
+		}
+	}
     return 0;
 }
