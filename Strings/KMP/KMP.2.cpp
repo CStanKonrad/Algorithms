@@ -27,12 +27,13 @@ SOFTWARE.
 #include <string>
 
 const int MAX_INPUT_SIZE = 2*1000000;
+const char *SEPARATOR = "#";
 
 int kmpArr[MAX_INPUT_SIZE + 7];	//pref-suf info array
 int kmp(std::string _text)
 {
 	int patLen;
-	for (patLen = 0; _text[patLen] != '#'; ++patLen);
+	for (patLen = 0; _text[patLen] != SEPARATOR[0]; ++patLen);
 	
 	int numOfOccurr = 0;
 	
@@ -57,6 +58,6 @@ std::string pattern, text;
 int main()
 {
 	std::cin >> pattern >> text;
-	std::cout << kmp(pattern + std::string("#") + text) << std::endl;
+	std::cout << kmp(pattern + std::string(SEPARATOR) + text) << std::endl;
 	return 0;
 }
