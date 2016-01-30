@@ -85,7 +85,7 @@ bool bfs(int _start, int _des)
 		
 		if (proc == _des)
 			return true;
-		//printf("%d\n", proc);
+		
 		for (int i = 0, e; i < V[proc].adj.size(); ++i)
 		{
 			e = V[proc].adj[i];
@@ -106,9 +106,8 @@ long long dinic(int _source, int _sink)
 	{
 		for (int i = 1; i <= N; ++i)
 			V[i].ptr = 0;
-		//puts("ee");
+		
 		result += dfs(_source, _sink, std::numeric_limits<long long>::max());
-		//printf("%lld\n", result);
 	}
 	return result;
 }
