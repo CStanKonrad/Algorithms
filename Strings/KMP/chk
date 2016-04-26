@@ -1,6 +1,6 @@
 -gen
 gen/genRand
-10
+100
 -gena
 10 10000 100
 -pat
