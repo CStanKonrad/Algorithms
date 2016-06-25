@@ -14,3 +14,6 @@ brute-force: brute-force.cpp
 
 gen/genRand: gen/genRand.cpp
 	./DbgCompile.sh gen/genRand
+	
+train: train.cpp
+	./DbgCompile.sh train

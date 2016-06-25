@@ -2,9 +2,9 @@
 gen/genRand
 100
 -gena
-5000 30000 1000
+10 10 10000 100
 -pat
-Dinic
+brute-force
 -tf
 tests/
 -ncs

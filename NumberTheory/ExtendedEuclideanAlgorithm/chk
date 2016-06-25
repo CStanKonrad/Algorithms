@@ -1,6 +1,6 @@
 -gen
 gen/genRand
-10
+100
 -gena
 1000 1000
 -pat
@@ -11,3 +11,5 @@ tests/
 -tera
 -savwa
 -gseedt
+-sn
+train
