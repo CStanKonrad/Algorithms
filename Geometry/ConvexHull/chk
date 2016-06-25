@@ -1,0 +1,15 @@
+-gen
+gen/genRand
+100
+-gena
+100 100000 10000
+-pat
+MonotoneChain
+-tf
+tests/
+-ncs
+-tera
+-savwa
+-gseedt
+-sn
+train
