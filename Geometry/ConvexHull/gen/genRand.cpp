@@ -9,7 +9,7 @@ int main(int _argc, char *_argv[])
 {
 	if (_argc < 4)
 	{
-		cerr << "Generator: No n or m or valBorder provided" << endl;
+		cerr << "Generator: No t or nBorder or valBorder provided" << endl;
 		return -1;
 	}
 	srand(stoi(_argv[1]) + 1);
