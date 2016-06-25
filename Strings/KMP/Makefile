@@ -1,4 +1,4 @@
-all: KMP KMP.2 KMP.3 gen/genRand brute-force
+all: KMP KMP.2 KMP.3 gen/genRand brute-force train
 
 KMP: KMP.cpp
 	./DbgCompile.sh KMP
