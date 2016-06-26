@@ -1,0 +1,15 @@
+-gen
+gen/genRand
+100
+-gena
+100 100 1000
+-pat
+LCS
+-tf
+tests/
+-ncs
+-tera
+-savwa
+-gseedt
+-sn
+train
