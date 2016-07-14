@@ -2,11 +2,11 @@
 gen/genRand
 100
 -gena
-1000 1000
+1000000 2000000000 1000000000
 -pat
-ExtendedEuclideanAlgorithm
+FastExponentiation
 -tf
-tests/
+test/
 -tn
 test.in
 -errs

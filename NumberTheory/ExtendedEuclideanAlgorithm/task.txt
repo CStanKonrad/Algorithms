@@ -1,0 +1,4 @@
+Input
+a, b //positive integers <= 1000
+Output
+x, y, d: x*a +y*b = d && d=gcd(a,b)

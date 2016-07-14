@@ -1,0 +1,5 @@
+Input
+a, b, c: -10^6 <= a <= 10^6; 0 <= b <= 2*10^9; 1 <= c <= 10^9
+Output
+a to the power of b, mod c ((a^b) mod c)
+(result should be >= 0 (for example -1 mod 9 = 8))
