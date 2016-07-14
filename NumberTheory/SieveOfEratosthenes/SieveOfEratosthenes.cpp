@@ -56,10 +56,11 @@ void printPrimes(int _end)
     }
 }
 
-
+int n;
 int main()
 {
-    sieveOfEratosthenes(MAX_VAL);
-    printPrimes(MAX_VAL);
+	scanf("%d", &n);
+    sieveOfEratosthenes(n);
+    printPrimes(n);
     return 0;
 }

@@ -1,0 +1,4 @@
+Input
+n	//0 <= n <= 10^7
+Output
+prime numbers <= n

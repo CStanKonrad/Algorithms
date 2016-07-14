@@ -1,0 +1,17 @@
+-gen
+gen/genRand
+100
+-gena
+10000000
+-pat
+SieveOfEratosthenes
+-tf
+test/
+-tn
+test.in
+-errs
+-tera
+-savwa
+-gseedt
+-sn
+train
