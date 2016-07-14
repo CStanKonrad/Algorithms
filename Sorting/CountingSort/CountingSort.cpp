@@ -30,6 +30,9 @@ SOFTWARE.
 
 int countingSortBufferArr[MAX_TAB_SIZE + 7];
 int countingSortCountingArr[MAX_VAL + 7];
+/* let n = _end - _beg + 1
+ * let v = max{_arr[_beg], ..., _arr[_end - 1]}
+ * O(n + v) */
 void countingSort(int _beg, int _end, int *_arr)    //[_beg;_end)
 {
     int maxVal = _arr[_beg];

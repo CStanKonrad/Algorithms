@@ -6,3 +6,9 @@
 *.in
 *.out
 *.test
+
+# SolutionChecker #
+SolutionChecker/
+
+# Training #
+train.cpp

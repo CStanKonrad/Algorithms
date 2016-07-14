@@ -1,0 +1,17 @@
+-gen
+gen/genRand
+100
+-gena
+1000000 1000
+-pat
+stl-check
+-tf
+test/
+-tn
+test.in
+-errs
+-tera
+-savwa
+-gseedt
+-sn
+train

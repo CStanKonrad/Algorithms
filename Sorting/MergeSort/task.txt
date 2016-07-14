@@ -1,0 +1,6 @@
+Input
+n - number of numbers <= 1000000
+a0, a1, a2, a3, ..., an-1 //numbers >= 0 and <= 1000000
+beg end	//[beg;end) interval to sort: abeg <= aend-1
+Output
+ai, aj, ... //sequence from input but with sorted interval [beg;end)
