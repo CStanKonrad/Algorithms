@@ -16,12 +16,12 @@ void add(int _beg, int _end, long long _val)
 
 long long query(int _beg, int _end)
 {
-	long long maximum = 0;
+	long long sum = 0;
 	for (int i = _beg; i <= _end; i++)
 	{
-		maximum += tab[i];
+		sum += tab[i];
 	}
-	return maximum;
+	return sum;
 }
 
 int main()

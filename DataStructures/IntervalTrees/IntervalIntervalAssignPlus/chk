@@ -2,13 +2,16 @@
 gen/genRand
 100
 -gena
-10000 10000 10000
+1000 1000 1000
 -pat
 brute-force
 -tf
 tests/
--ncs
+-tn
+test.in
+-errs
 -tera
 -savwa
 -gseedt
--gseedt
+-sn
+train

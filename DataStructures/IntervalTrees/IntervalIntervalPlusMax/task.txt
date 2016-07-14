@@ -1,0 +1,9 @@
+Input
+n //size of array
+m //number of operations
+//m rows
+ti, ai, bi, ci(ci only if ti == 1) // ti = {0;1}; [ai; bi] interval: [ai; bi] e [1; n]; ci - value
+//ti = 1 means add to each element in interval [ai; bi] value ci
+
+Output
+for each row with ti = 0 write max[ai;bi]
