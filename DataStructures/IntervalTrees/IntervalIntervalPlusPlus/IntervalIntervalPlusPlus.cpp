@@ -95,6 +95,7 @@ public:
 		}
 		return;
 	}
+	
 	/* O(log(2, numOfLeaves));
 	 * returns sum of elements on interval [beg; end] */
 	T query(int beg, int end)
@@ -133,9 +134,6 @@ public:
 		return result;
 		
 	}
-	
-	
-	
 };
 
 
