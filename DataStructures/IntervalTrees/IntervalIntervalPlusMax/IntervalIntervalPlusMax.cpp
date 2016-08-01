@@ -23,76 +23,71 @@ SOFTWARE.
 */
 #include <cstdio>
 #include <algorithm>
+#include <assert.h>
 
-struct SNode
-{
-    long long w;    //added value
-    long long W;    //maximum in subtree
-};
-/*  log2ReservedMemory: 2^log2ReservedMemory >= 2^(log2(pO2NumOfElements)+1) */
-template<int log2ReservedMemory=21>
+template <typename T = long long>
 class CIIPlusMaxTree
 {
 private:
-	SNode array[(1<<log2ReservedMemory) + 7];
-	bool isInited = false;
-	int numOfLeaves;	//number of leaves in tree
-	int numOfElements;	//number of used leaves
-	
-	void update(const int _nodeId, const long long _val)
+	static const int ALLOCATED_MEMORY_ = (1<<21) + 7;
+	struct SNode
 	{
-		array[_nodeId].w += _val;
-		array[_nodeId].W = array[_nodeId].w;
-		
-		if (_nodeId < numOfLeaves)
-			array[_nodeId].W += std::max(array[2*_nodeId].W, array[2*_nodeId + 1].W);
-		
-		return;
+		T w = 0;	//modification
+		T W = 0;	//max in subtree
+	}storage[ALLOCATED_MEMORY_];
+	
+	int numOfLeaves;
+	bool isInited = false;
+	
+	
+	void update(int id, T val)
+	{
+		storage[id].w += val;
+		storage[id].W = storage[id].w;
+		if (id < numOfLeaves)
+		{
+			storage[id].W += std::max(storage[2*id].W, storage[2*id + 1].W);
+		}
 	}
 	
-	long long sumWSmallToRoot(int _nodeId)
+	T sum_w_toRoot(int pos)
 	{
-		long long result = 0;
-		while (_nodeId >= 1)
+		T result = 0;
+		while (pos >= 1)
 		{
-			result += array[_nodeId].w;
-			_nodeId /= 2;
+			result += storage[pos].w;
+			pos>>=1;
 		}
 		return result;
 	}
 	
 public:
-	void init(int _numOfElements)
+	/* O(log(2, numOfElements)) */
+	void init(int numOfElements)
 	{
-		numOfElements = _numOfElements;
-		for (numOfLeaves = 1; numOfLeaves < numOfElements; numOfLeaves <<= 1);
-		
-		if (numOfLeaves + numOfLeaves - 1 > (1<<log2ReservedMemory))
-			throw "CIIPlusMaxTree::init: Too many elements";
+		for (numOfLeaves = 2; numOfLeaves < numOfElements; numOfLeaves <<= 1);
 		
 		isInited = true;
 	}
-	/*add to all elements from interval [_beg;_end] value _val; _beg >= 1*/
-	void insert(int _beg, int _end, long long _val)
+	
+	/* O(log(2, numOfLeaves));
+	 * adds to elements on interval [beg; end] value val */
+	void insert(int beg, int end, T val)
 	{
-		if (isInited == false)
-			throw "CIIPlusMaxTree::insert: tree not initialized";
-		if (_beg <= 0 || _beg > numOfElements || _end <= 0 || _end > numOfElements || _end < _beg)
-			throw "CIIPlusMaxTree::insert: wrong _beg or _end values";
+		assert(isInited); assert(beg <= end); assert(beg >= 1); assert(end <= numOfLeaves);
+		int i = numOfLeaves + beg - 1;
+		int j = numOfLeaves + end - 1;
 		
-		int i = numOfLeaves + _beg - 1;
-		int j = numOfLeaves + _end - 1;
-		
-		update(i, _val);
-		if (i != j)
-			update(j, _val);
+		update(i, val);
+		if ( i!= j)
+			update(j, val);
 		
 		while (i/2 != j/2)
 		{
 			if (i%2 == 0)
-				update(i + 1, _val);
+				update(i + 1, val);
 			if (j%2 == 1)
-				update(j - 1, _val);
+				update(j - 1, val);
 			i /= 2;
 			j /= 2;
 			update(i, 0);
@@ -105,42 +100,40 @@ public:
 			update(i, 0);
 			i /= 2;
 		}
-		return;
 	}
-	/*sum of elements from interval [_beg;_end]; _beg >= 1*/
-	long long query(int _beg, int _end)
+	
+	/* O(log(2, numOfLeaves));
+	 * returns maximum on interval [beg; end] */
+	T query(int beg, int end)
 	{
-		if (isInited == false)
-			throw "CIIPlusMaxTree::query: tree not initialized";
-		if (_beg <= 0 || _beg > numOfElements || _end <= 0 || _end > numOfElements || _end < _beg)
-			throw "CIIPlusMaxTree::query: wrong _beg or _end values";
+		assert(isInited); assert(beg <= end); assert(beg >= 1); assert(end <= numOfLeaves);
 		
-		int i = numOfLeaves + _beg - 1;
-		int j = numOfLeaves + _end - 1;
+		int i = numOfLeaves + beg - 1;
+		int j = numOfLeaves + end - 1;
 		
-		long long rootSumI = sumWSmallToRoot(i / 2);
-		long long rootSumJ = sumWSmallToRoot(j / 2);
+		T sumLeft = sum_w_toRoot(i/2);
+		T sumRight = sum_w_toRoot(j/2);
 		
-		long long result = std::max(rootSumI + array[i].W, rootSumJ + array[j].W);
+		T result = std::max(storage[i].W + sumLeft, storage[j].W + sumRight);
 		
 		while (i/2 != j/2)
 		{
 			if (i%2 == 0)
-				result = std::max(result, rootSumI + array[i + 1].W);
-			
+				result = std::max(result, storage[i + 1].W + sumLeft);
 			if (j%2 == 1)
-				result = std::max(result, rootSumJ + array[j - 1].W);
-			
+				result = std::max(result, storage[j - 1].W + sumRight);
 			i /= 2;
 			j /= 2;
-			rootSumI -= array[i].w;
-			rootSumJ -= array[j].w;
+			sumLeft -= storage[i].w;
+			sumRight -= storage[j].w;
 		}
 		return result;
 	}
-	
 };
-CIIPlusMaxTree<21> tree;
+
+
+
+CIIPlusMaxTree<long long> tree;
 int n, m;
 int main()
 {
@@ -148,24 +141,16 @@ int main()
 	tree.init(n);
 	for (int i = 1, t, a, b, c; i <= m; i++)
 	{
-		try
+		scanf("%d", &t);
+		if (t == 1)
 		{
-			scanf("%d", &t);
-			if (t == 1)
-			{
-				scanf("%d%d%d", &a, &b, &c);
-				tree.insert(a, b, c);
-			}
-			else
-			{
-				scanf("%d%d", &a, &b);
-				printf("%lld\n", tree.query(a, b));
-			}
+			scanf("%d%d%d", &a, &b, &c);
+			tree.insert(a, b, c);
 		}
-		catch(const char *_err)
+		else
 		{
-			printf("ERROR:%s\n", _err);
-			return -1;
+			scanf("%d%d", &a, &b);
+			printf("%lld\n", tree.query(a, b));
 		}
 	}
     return 0;
