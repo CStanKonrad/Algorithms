@@ -79,7 +79,9 @@ public:
 	}
 	
 	/* O(1)
-	 * returns min value on interval [beg;end] */
+	 * returns min value on interval [beg;end]
+	 * beg >= 1
+	 * end <= USED_MEMORY_ */
 	T query(int beg, int end)
 	{
 		assert(isCalculated); assert(beg <= end); assert(1 <= beg); assert(end <= USED_MEMORY_);

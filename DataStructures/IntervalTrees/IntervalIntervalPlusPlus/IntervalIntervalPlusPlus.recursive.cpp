@@ -98,7 +98,9 @@ public:
 	}
 	
 	/* O(log(2, numOfLeaves));
-	 * adds to elements on interval [beg; end] value val */
+	 * adds to elements on interval [beg; end] value val
+	 * beg >= 1
+	 * end <= numOfLeaves */
 	void insert(int beg, int end, T val)
 	{
 		assert(isInited); assert(beg <= end); assert(beg >= 1); assert(end <= numOfLeaves);
@@ -109,7 +111,9 @@ public:
 	}
 	
 	/* O(log(2, numOfLeaves));
-	 * returns sum of elements on interval [beg; end] */
+	 * returns sum of elements on interval [beg; end]
+	 * beg >= 1
+	 * end <= numOfLeaves */
 	T query(int beg, int end)
 	{
 		assert(isInited); assert(beg <= end); assert(beg >= 1); assert(end <= numOfLeaves);
