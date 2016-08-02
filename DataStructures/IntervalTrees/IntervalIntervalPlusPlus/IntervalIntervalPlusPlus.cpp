@@ -24,11 +24,11 @@ SOFTWARE.
 #include <cstdio>
 #include <assert.h>
 
-template <typename T = long long>
+template <const int ALLOCATED_MEMORY_log2_ = 21, typename T = long long>
 class CIIPlusPlusTree
 {
 private:
-	static const int ALLOCATED_MEMORY_ = (1<<21) + 7;
+	static const int ALLOCATED_MEMORY_ = (1<<ALLOCATED_MEMORY_log2_) + 7;
 	struct SNode
 	{
 		T w = 0;	//modification
@@ -138,7 +138,7 @@ public:
 
 
 
-CIIPlusPlusTree<long long> tree;
+CIIPlusPlusTree<21, long long> tree;
 int n, m;
 int main()
 {
