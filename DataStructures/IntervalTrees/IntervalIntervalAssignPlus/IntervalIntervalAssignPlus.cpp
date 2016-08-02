@@ -24,17 +24,23 @@ SOFTWARE.
 #include <cstdio>
 #include <assert.h>
 
+
+constexpr int REAL_SAFE_P2_SIZE_ALLOCATED_MEMORY_(const int ALLOCATED_MEMORY_log2_)
+{
+	return (1<<ALLOCATED_MEMORY_log2_) + 7;
+}
+
+
 template <const int ALLOCATED_MEMORY_log2_ = 21, typename T = long long>
 class CIIAssignPlusTree
 {
 private:
-	static const int ALLOCATED_MEMORY_ = (1<<ALLOCATED_MEMORY_log2_) + 7;
 	struct SNode
 	{
 		T w = 0;	//modification
 		T W = 0;	//max in subtree
 		bool isNew = false;
-	}storage[ALLOCATED_MEMORY_];
+	}storage[REAL_SAFE_P2_SIZE_ALLOCATED_MEMORY_(ALLOCATED_MEMORY_log2_) ];
 	
 	int numOfLeaves;
 	bool isInited = false;
