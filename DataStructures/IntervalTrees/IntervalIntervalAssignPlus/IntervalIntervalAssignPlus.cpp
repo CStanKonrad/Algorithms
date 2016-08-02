@@ -190,24 +190,16 @@ int main()
 	tree.init(n);
 	for (int i = 1, t, a, b, c; i <= m; i++)
 	{
-		try
+		scanf("%d", &t);
+		if (t == 1)
 		{
-			scanf("%d", &t);
-			if (t == 1)
-			{
-				scanf("%d%d%d", &a, &b, &c);
-				tree.insert(a, b, c);
-			}
-			else
-			{
-				scanf("%d%d", &a, &b);
-				printf("%lld\n", tree.query(a, b));
-			}
+			scanf("%d%d%d", &a, &b, &c);
+			tree.insert(a, b, c);
 		}
-		catch(const char *_err)
+		else
 		{
-			printf("ERROR:%s\n", _err);
-			return -1;
+			scanf("%d%d", &a, &b);
+			printf("%lld\n", tree.query(a, b));
 		}
 	}
     return 0;
