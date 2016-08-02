@@ -1,7 +1,10 @@
-all: IntervalIntervalPlusPlus brute-force gen/genRand train
+all: IntervalIntervalPlusPlus IntervalIntervalPlusPlus.recursive brute-force gen/genRand train
 
 IntervalIntervalPlusPlus: IntervalIntervalPlusPlus.cpp
 	./DbgCompile.sh IntervalIntervalPlusPlus
+
+IntervalIntervalPlusPlus.recursive: IntervalIntervalPlusPlus.recursive.cpp
+	./DbgCompile.sh IntervalIntervalPlusPlus.recursive
 
 brute-force: brute-force.cpp
 	./DbgCompile.sh brute-force
