@@ -33,7 +33,7 @@ int countingSort_counter[MAX_VAL + 7];
 /* let n = _end - _beg + 1
  * let v = max{_arr[_beg], ..., _arr[_end - 1]}
  * O(n + v)
- * Works onl for positive + {0} integers <= MAX_VAL
+ * Works only for positive + {0} integers <= MAX_VAL
  * stable */
 void countingSort(int *beg, int *end)    //[_beg;_end)
 {
