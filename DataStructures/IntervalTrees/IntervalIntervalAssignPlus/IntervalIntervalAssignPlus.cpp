@@ -33,183 +33,156 @@ struct SNode
 	bool isNew = 0;
 };
 
-template<int log2ReservedMemory=21>
+/*
+The MIT License (MIT)
+
+Copyright (c) 2016 CStanKonrad
+
+Permission is hereby granted, free of charge, to any person obtaining a copy
+of this software and associated documentation files (the "Software"), to deal
+in the Software without restriction, including without limitation the rights
+to use, copy, modify, merge, publish, distribute, sublicense, and/or sell
+copies of the Software, and to permit persons to whom the Software is
+furnished to do so, subject to the following conditions:
+
+The above copyright notice and this permission notice shall be included in all
+copies or substantial portions of the Software.
+
+THE SOFTWARE IS PROVIDED "AS IS", WITHOUT WARRANTY OF ANY KIND, EXPRESS OR
+IMPLIED, INCLUDING BUT NOT LIMITED TO THE WARRANTIES OF MERCHANTABILITY,
+FITNESS FOR A PARTICULAR PURPOSE AND NONINFRINGEMENT. IN NO EVENT SHALL THE
+AUTHORS OR COPYRIGHT HOLDERS BE LIABLE FOR ANY CLAIM, DAMAGES OR OTHER
+LIABILITY, WHETHER IN AN ACTION OF CONTRACT, TORT OR OTHERWISE, ARISING FROM,
+OUT OF OR IN CONNECTION WITH THE SOFTWARE OR THE USE OR OTHER DEALINGS IN THE
+SOFTWARE.
+*/
+#include <cstdio>
+#include <algorithm>
+#include <limits>
+#include <assert.h>
+
+template <typename T = long long>
 class CIIAssignPlusTree
 {
 private:
-	SNode array[(1 << 21) + 7];
+	static const int ALLOCATED_MEMORY_ = (1<<21) + 7;
+	struct SNode
+	{
+		T w = 0;	//modification
+		T W = 0;	//max in subtree
+		bool isNew = false;
+	}storage[ALLOCATED_MEMORY_];
+	
+	int numOfLeaves;
 	bool isInited = false;
 	
-	int numOfLeaves;	//number of leaves in tree
-	int log2NumOfLeaves;
-	int numOfElements;	//number of used leaves
 	
-	void updateNew(const int _nodeId, const long long _val, const int _howManyInSubTree)
+	void recurInsert(int pos, int beg, int end, T val, int p2)
 	{
-		array[_nodeId].w = _val;
-		array[_nodeId].isNew = true;
-		array[_nodeId].W = _howManyInSubTree*array[_nodeId].w;
+		int left = pos*p2;
+		int right = left + p2 - 1;
 		
-		//if (_nodeId < numOfLeaves)
-			//array[_nodeId].W += array[2*_nodeId].W + array[2*_nodeId + 1].W;
-		
-		return;
-	}
-	void updateOld(const int _nodeId)
-	{
-		
-		if (_nodeId < numOfLeaves)
+		if ((right < beg) || (left > end))
 		{
-			
-			array[_nodeId].W = array[2*_nodeId].W + array[2*_nodeId + 1].W;
-			//printf("uo:%d:%lld %lld %lld\n", _nodeId, array[2*_nodeId].W, array[2*_nodeId + 1].W, array[_nodeId].W);
+			return;
+		}
+		else if ((beg <= left) && (right <= end))
+		{
+			storage[pos].w = val;
+			storage[pos].W = p2 * val;
+			storage[pos].isNew = true;
+			return;
 		}
 		else
-			array[_nodeId].W = array[_nodeId].w;
-		
-		return;
+		{
+			if (storage[pos].isNew)
+			{
+				storage[2*pos].w = storage[pos].w;
+				storage[2*pos].W = (p2>>1) * storage[pos].w;
+				storage[2*pos].isNew = true;
+				
+				storage[2*pos + 1].w = storage[pos].w;
+				storage[2*pos + 1].W = (p2>>1) * storage[pos].w;
+				storage[2*pos + 1].isNew = true;
+				
+				storage[pos].isNew = false;
+			}
+			recurInsert(2*pos, beg, end, val, p2>>1);
+			recurInsert(2*pos + 1, beg, end, val, p2>>1);
+			
+			storage[pos].W = storage[2*pos].W + storage[2*pos + 1].W;
+		}
 	}
 	
-	void pushDownNew(int _beg, int _end, int _p2, int _pos = 1)	
+	T recurQuery(int pos, int beg, int end, int p2)
 	{
-		//printf("[%d %d]: p2:%d pos:%d\n", _beg, _end, _p2, _pos);
-		if ((_pos*(1<<_p2) > _beg && _pos*(1<<_p2) + (1<<_p2) - 1 < _end) || !(((_pos*(1<<_p2) >= _beg && _pos*(1<<_p2) <= _end) || (_pos*(1<<_p2) + (1<<_p2) - 1 >= _beg && _pos*(1<<_p2) + (1<<_p2) - 1 <= _end)) || (_pos*(1<<_p2) <= _beg && _pos*(1<<_p2) + (1<<_p2) - 1 >= _end)) || _pos > numOfLeaves)	//_pos represents interval inside [_beg;_end] or _pos represents interval without common points with [_beg;_end]
-			return;
-		//printf("%d====ok\n", _pos);
-		//if (_pos >= numOfLeaves)
-			//return;
+		int left = pos*p2;
+		int right = left + p2 - 1;
 		
-		if (array[_pos].isNew == true)
+		if ((right < beg) || (left > end))
 		{
-			//puts("new");
-			//array[2*_pos + 1].w = array[2*_pos].w = array[_pos].w;
-			updateNew(2*_pos + 1, array[_pos].w, (1<<(_p2 - 1)));
-			updateNew(2*_pos, array[_pos].w, (1<<(_p2 - 1)));
-			//array[2*_pos + 1].isNew = array[2*_pos].isNew = true;
-			array[_pos].isNew = false;
-			
+			return 0 ;
 		}
-		updateOld(_pos);
-		pushDownNew(_beg, _end, _p2 - 1, 2*_pos);
-		pushDownNew(_beg, _end, _p2 - 1, 2*_pos + 1);
-		
+		else if ((beg <= left) && (right <= end))
+		{
+			return storage[pos].W;
+		}
+		else
+		{
+			if (storage[pos].isNew)
+			{
+				storage[2*pos].w = storage[pos].w;
+				storage[2*pos].W = (p2>>1)*storage[pos].w;
+				storage[2*pos].isNew = true;
+				
+				storage[2*pos + 1].w = storage[pos].w;
+				storage[2*pos + 1].W = (p2>>1)*storage[pos].w;
+				storage[2*pos + 1].isNew = true;
+				
+				storage[pos].isNew = false;
+			}
+			return recurQuery(2*pos, beg, end, p2>>1) + recurQuery(2*pos + 1, beg, end, p2>>1);
+		}
 	}
+	
+	
 public:
-	void init(int _numOfElements)
+	/* O(log(2, numOfElements)) */
+	void init(int numOfElements)
 	{
-		numOfElements = _numOfElements;
-		for (numOfLeaves = 1; numOfLeaves < numOfElements; numOfLeaves <<= 1)
-			++log2NumOfLeaves;
-		
-		if (numOfLeaves + numOfLeaves - 1 > (1<<log2ReservedMemory))
-			throw "CIIPlusPlusTree::init: Too many elements";
+		for (numOfLeaves = 2; numOfLeaves < numOfElements; numOfLeaves <<= 1);
 		
 		isInited = true;
 	}
-	void insert(int _beg, int _end, long long _val)
+	
+	/* O(log(2, numOfLeaves));
+	 * sets  elements on interval [beg; end] to value val */
+	void insert(int beg, int end, T val)
 	{
-		if (isInited == false)
-			throw "CIIPlusPlusTree::insert: tree not initialized";
-		if (_beg <= 0 || _beg > numOfElements || _end <= 0 || _end > numOfElements || _end < _beg)
-			throw "CIIPlusPlusTree::insert: wrong _beg or _end values";
+		assert(isInited); assert(beg <= end); assert(beg >= 1); assert(end <= numOfLeaves);
+		beg = numOfLeaves + beg - 1;
+		end = numOfLeaves + end - 1;
 		
-		//printf("=-=-=-=-=-=%d-%d\n", _beg, _end);
-		int i = numOfLeaves + _beg - 1;
-		int j = numOfLeaves + _end - 1;
-		//std::cerr << log2NumOfLeaves << std::endl;
-		pushDownNew(i, j, log2NumOfLeaves);
-		
-		
-		int howManyInSubTree = 1;
-		
-		updateNew(i, _val, howManyInSubTree);
-		if (i != j)
-			updateNew(j, _val, howManyInSubTree);
-		
-		while (i/2 != j/2)
-		{
-			//printf("%d=%lld %lld %lld\n", i, array[i].W, array[2*i].W, array[2*i + 1].W);
-			//printf("%d=%lld %lld %lld\n", j, array[j].W, array[2*j].W, array[2*j + 1].W);
-			if (i%2 == 0)
-				updateNew(i + 1, _val, howManyInSubTree);
-			if (j%2 == 1)
-				updateNew(j - 1, _val, howManyInSubTree);
-			i /= 2;
-			j /= 2;
-			array[i].isNew = array[j].isNew = false;
-			howManyInSubTree *= 2;
-			updateOld(i);
-			updateOld(j);
-		}
-		
-		updateOld(i);
-		i /= 2;
-		howManyInSubTree *= 2;
-		while (i >= 1)
-		{
-			array[i].isNew = array[j].isNew = false;
-			updateOld(i);
-			i /= 2;
-			howManyInSubTree *= 2;
-		}
-		return;
-		
-		
+		recurInsert(1, beg, end, val, numOfLeaves);
 		
 	}
 	
-	long long query(int _beg, int _end)
+	/* O(log(2, numOfLeaves));
+	 * returns sum of elements on interval [beg; end] */
+	T query(int beg, int end)
 	{
-		//return array[1].W;
-		if (isInited == false)
-			throw "CIIPlusPlusTree::query: tree not initialized";
-		if (_beg <= 0 || _beg > numOfElements || _end <= 0 || _end > numOfElements || _end < _beg)
-			throw "CIIPlusPlusTree::query: wrong _beg or _end values";
+		assert(isInited); assert(beg <= end); assert(beg >= 1); assert(end <= numOfLeaves);
 		
+		beg = numOfLeaves + beg - 1;
+		end = numOfLeaves + end - 1;
 		
-		int i = numOfLeaves + _beg - 1;
-		int j = numOfLeaves + _end - 1;
-		pushDownNew(i, j, log2NumOfLeaves);
-		//pushDownNew(_beg, _end, log2NumOfLeaves);
-		
-		int howManyInSubTree = 1;
-		
-		long long result = array[i].W;
-		if (i != j)
-			result += array[j].W;
-		//printf("%d=%lld %lld %lld\n", i, array[i].W, array[2*i].W, array[2*i + 1].W);
-		//printf("%d=%lld %lld %lld\n", j, array[j].W, array[2*j].W, array[2*j + 1].W);
-		while (i/2 != j/2)
-		{
-			//printf("%d=%lld %lld %lld\n", i, array[i].W, array[2*i].W, array[2*i + 1].W);
-			//printf("%d=%lld %lld %lld\n", j, array[j].W, array[2*j].W, array[2*j + 1].W);
-			//if (i%2 == 0)
-			if (i%2 == 0)
-			{
-				//updateOld(i + 1);
-				result += array[i + 1].W;
-			}
-			
-			if (j%2 == 1)
-			{
-				//updateOld(j - 1);
-				result += array[j - 1].W;
-			}
-			
-			i /= 2;
-			j /= 2;
-			
-			howManyInSubTree *= 2;
-			//updateOld(i);
-			//updateOld(i);
-
-		}
-		return result;
-		
+		return recurQuery(1, beg, end, numOfLeaves);
 	}
 };
 
-CIIAssignPlusTree<21> tree;
+
+
+CIIAssignPlusTree<long long> tree;
 int n, m;
 int main()
 {
