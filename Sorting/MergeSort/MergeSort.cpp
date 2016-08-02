@@ -1,7 +1,7 @@
 /*
 The MIT License (MIT)
 
-Copyright (c) 2015 CStanKonrad
+Copyright (c) 2016 CStanKonrad
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -27,55 +27,58 @@ SOFTWARE.
 #define MAX_TAB_SIZE 1000000
 
 
-
-int mergeSortArrary[MAX_TAB_SIZE + 7];
-void mergeSort(int _beg, int _end, int *_arr)   //sorts [_beg;_end): a[i] <= a[j] for i < j
+/* O(nlog(2, end - beg))
+ * stable
+ * */
+int mergeSort_buffer[MAX_TAB_SIZE + 7];
+void mergeSort(int *beg, int *end)   //sorts [beg;end): a[i] <= a[j] for i < j
 {
-    int mid = (_end + _beg) / 2;
-    if (_end - _beg > 2)
-    {
-        mergeSort(_beg, mid, _arr);
-        mergeSort(mid, _end, _arr);
-    }
-
-    for (int i = _beg; i < _end; i++)
-        mergeSortArrary[i] = _arr[i];
-
-    int i = _beg;
-    int j = mid;
-    int e = _beg;
-
-    while (i < mid && j < _end)
-    {
-        if (mergeSortArrary[i] <= mergeSortArrary[j])
-        {
-            _arr[e] = mergeSortArrary[i];
-            e++;
-            i++;
-        }
-        else
-        {
-            _arr[e] = mergeSortArrary[j];
-            e++;
-            j++;
-        }
-    }
-
-    while (i < mid)
-    {
-        _arr[e] = mergeSortArrary[i];
-        e++;
-        i++;
-    }
-    while (j < _end)
-    {
-
-        _arr[e] = mergeSortArrary[j];
-        e++;
-        j++;
-    }
-
-    return;
+	int *mid = &beg[int(end - beg)/2];
+	
+	if (end - beg > 2)
+	{
+		mergeSort(beg, mid);
+		mergeSort(mid, end);
+	}
+	
+	
+	for (int i = 0; &beg[i] != end; ++i)
+		mergeSort_buffer[i] = beg[i];
+	
+	
+	int i = 0, j = int(mid - beg), e = 0;
+	
+	while (&beg[i] != mid && &beg[j] != end)
+	{
+		if (mergeSort_buffer[i] <= mergeSort_buffer[j])
+		{
+			beg[e] = mergeSort_buffer[i];
+			++i;
+		}
+		else
+		{
+			beg[e] = mergeSort_buffer[j];
+			++j;
+		}
+		++e;
+	}
+	
+	while (&beg[i] != mid)
+	{
+		
+		beg[e] = mergeSort_buffer[i];
+		++i;
+		++e;
+	}
+	
+	while (&beg[j] != end)
+	{
+		
+		beg[e] = mergeSort_buffer[j];
+		++j;
+		++e;
+	}
+	return;
 }
 
 int array[MAX_TAB_SIZE + 7];
@@ -89,7 +92,7 @@ int main()
     }
     int beg, end;
     scanf("%d%d", &beg, &end);
-    mergeSort(beg, end, array);
+    mergeSort(&array[beg], &array[end]);
     for (int i = 0; i < n; i++)
     {
         printf("%d ", array[i]);

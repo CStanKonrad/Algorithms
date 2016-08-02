@@ -30,12 +30,12 @@ SOFTWARE.
 
 int countingSort_buffer[MAX_TAB_SIZE + 7];
 int countingSort_counter[MAX_VAL + 7];
-/* let n = _end - _beg + 1
- * let v = max{_arr[_beg], ..., _arr[_end - 1]}
+/* let n = end - beg + 1
+ * let v = max{_arr[beg], ..., _arr[end - 1]}
  * O(n + v)
  * Works only for positive + {0} integers <= MAX_VAL
  * stable */
-void countingSort(int *beg, int *end)    //[_beg;_end)
+void countingSort(int *beg, int *end)    //[beg;end)
 {
     int maxVal = 0;
     for (int i = 0; &beg[i] != end; ++i)
