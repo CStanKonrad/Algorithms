@@ -1,7 +1,7 @@
 /*
 The MIT License (MIT)
 
-Copyright (c) 2015 CStanKonrad
+Copyright (c) 2016 CStanKonrad
 
 Permission is hereby granted, free of charge, to any person obtaining a copy
 of this software and associated documentation files (the "Software"), to deal
@@ -26,26 +26,31 @@ SOFTWARE.
 #include <cstdlib>
 #include <algorithm>
 
-void quickSort(int _beg, int _end, int *_arr)   //[_beg;_end)
+/* Theta(nlog(2, end - beg))
+ * O(n^2)
+ * unstable
+ * */
+void quickSort(int *beg, int *end)
 {
-    if (_end - _beg <= 1)
-        return;
-
-    int separator = (rand()%(_end - _beg)) + _beg;  //random element from [_beg;_end)
-    std::swap(_arr[separator], _arr[_end - 1]);
-
-    int e = _beg;
-    for (int i = _beg; i < _end; i++)
-    {
-        if (_arr[i] <= _arr[_end - 1])
-        {
-            std::swap(_arr[i], _arr[e]);
-            e++;
-        }
-    }
-
-    quickSort(_beg, e - 1, _arr);
-    quickSort(e, _end, _arr);
+	if (beg >= end)
+		return;
+		
+	int separator = rand()%(end - beg);
+	std::swap(*(end - 1), beg[separator]);
+	
+	int j = 0;
+	for (int i = 0; &beg[i] != end; ++i)
+	{
+		if (beg[i] <= *(end - 1))
+		{
+			std::swap(beg[i], beg[j]);
+			++j;
+		}
+	}
+	quickSort(beg, &beg[j - 1]);
+	quickSort(&beg[j], end);
+	
+	return;
 }
 
 #define MAX_TAB_SIZE 1000000
@@ -61,7 +66,7 @@ int main()
     }
     int beg, end;
     scanf("%d%d", &beg, &end);
-    quickSort(beg, end, array);
+    quickSort(&array[beg],  &array[end]);
     for (int i = 0; i < n; i++)
     {
         printf("%d ", array[i]);
