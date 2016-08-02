@@ -28,35 +28,37 @@ SOFTWARE.
 #define MAX_TAB_SIZE 10000000
 #define MAX_VAL 1000000
 
-int countingSortBufferArr[MAX_TAB_SIZE + 7];
-int countingSortCountingArr[MAX_VAL + 7];
+int countingSort_buffer[MAX_TAB_SIZE + 7];
+int countingSort_counter[MAX_VAL + 7];
 /* let n = _end - _beg + 1
  * let v = max{_arr[_beg], ..., _arr[_end - 1]}
- * O(n + v) */
-void countingSort(int _beg, int _end, int *_arr)    //[_beg;_end)
+ * O(n + v)
+ * Works onl for positive + {0} integers <= MAX_VAL
+ * stable */
+void countingSort(int *beg, int *end)    //[_beg;_end)
 {
-    int maxVal = _arr[_beg];
-    for (int i = _beg; i < _end; i++)
-        if (_arr[i] > maxVal)
-            maxVal = _arr[i];
-
-    for (int i = 0; i <= maxVal; i++)
-        countingSortCountingArr[i] = 0;
-
-    for (int i = _beg; i < _end; i++)
+    int maxVal = 0;
+    for (int i = 0; &beg[i] != end; ++i)
     {
-        countingSortBufferArr[i] = _arr[i];
-        countingSortCountingArr[_arr[i]]++;
-    }
-    for (int i = 1; i <= maxVal; i++)
-        countingSortCountingArr[i] += countingSortCountingArr[i - 1];
-
-    for (int i = _end - 1; i >= _beg; i--)
-    {
-        countingSortCountingArr[countingSortBufferArr[i]]--;
-        _arr[countingSortCountingArr[countingSortBufferArr[i]] + _beg] = countingSortBufferArr[i];
-    }
-
+		maxVal = std::max(maxVal, beg[i]);
+		countingSort_buffer[i] = beg[i];
+	}
+	
+	for (int i = 0; i <= maxVal; ++i)
+		countingSort_counter[i] = 0;
+	
+	for (int i = 0; &beg[i] != end; ++i)
+		countingSort_counter[beg[i]]++;
+	
+	for (int i = 1; i <= maxVal; ++i)
+		countingSort_counter[i] += countingSort_counter[i - 1];
+		
+	for (int i = (end - beg - 1); i >= 0; --i)
+	{
+		beg[countingSort_counter[countingSort_buffer[i]] - 1] = countingSort_buffer[i];
+		--countingSort_counter[countingSort_buffer[i]];
+	}
+	return;
 }
 
 
@@ -72,7 +74,7 @@ int main()
     }
     int beg, end;
     scanf("%d%d", &beg, &end);
-    countingSort(beg, end, array);
+    countingSort(&array[beg], &array[end]);
     for (int i = 0; i < n; i++)
     {
         printf("%d ", array[i]);
