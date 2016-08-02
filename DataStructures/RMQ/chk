@@ -1,0 +1,17 @@
+-gen
+gen/genRand
+100
+-gena
+1024 1024 1024
+-pat
+brute-force
+-tf
+tests/
+-tn
+test.in
+-errs
+-tera
+-savwa
+-gseedt
+-sn
+train

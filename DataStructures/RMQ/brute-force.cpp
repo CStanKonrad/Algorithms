@@ -10,7 +10,7 @@ int main()
     {
         scanf("%d", &tab[i]);
     }
-    for (int j = 1, a, b; j <= m; j++)
+    for (int e = 1, a, b; e <= m; e++)
     {
         scanf("%d%d", &a, &b);
         int minVal = tab[a];

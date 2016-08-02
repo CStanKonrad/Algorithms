@@ -1,0 +1,10 @@
+Input
+n //size of array
+m //number of operations
+//n numbers
+v1, v2, ..., vn	//values in array
+//m rows
+ai bi //question interval
+
+Output
+for each question interval i return minimum value in the array on interval [ai;bi]
